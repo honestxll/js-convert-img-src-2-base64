@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Base64 Encode Image</title>
+	<style>* {margin: 0;padding: 0;}img {width: 100vw;height: 100vh;object-fit: cover;} body {overflow: hidden;}</style>
+</head>
+<body>
+	<img id="demo" alt="test image">
+	<script>
+		/**
+		 * 使用 XHR 发送 http 请求
+		 * 得到的结果使用 FileReader 转成 base64 加密
+		 * 在获取数据的过程中，图片资源的服务器需要允许我们这边请求，如果不允许就有可能造成 cors 跨域
+		 * 所以我们要找一个代理的服务器解决跨域的问题，也就是下面 proxyUrl
+		 * 它会把 imgUrl 的访问结果成功的返回给你
+		 */
+		var proxyUrl = 'https://cors-anywhere.herokuapp.com/',
+				imgUrl = "https://admin.can-leading.cn/public/upload/photos/15319866674183.jpeg",
+				demo = document.getElementById('demo')
+
+		// var imgUrl = "https://imgsa.baidu.com/exp/pic/item/09bb4f3d269759eeed4e116fb3fb43166d22df3d.jpg"
+
+		// function toDataURL(url, callback) {
+		// 	var xhr = new XMLHttpRequest();
+		// 	xhr.onload = function() {
+		// 		var reader = new FileReader();
+		// 		reader.onloadend = function() {
+		// 			callback(reader.result);
+		// 		}
+		// 		reader.readAsDataURL(xhr.response);
+		// 	};
+		// 	xhr.open('GET', url);
+		// 	xhr.responseType = 'blob';
+		// 	xhr.send();
+		// }
+
+		const toDataUrl = url => fetch(url)
+			.then(response => response.blob())
+			.then(blob => new Promise((resolve, reject) => {
+				const reader = new FileReader
+				reader.onload = () => resolve(reader.result)
+				reader.onerror = reject
+				reader.readAsDataURL(blob)
+			}))
+
+		toDataUrl(proxyUrl + imgUrl)
+			.then(dataUrl => {
+				console.log('RESULT:', dataUrl)
+				demo.setAttribute('src', dataUrl)
+			})
+	</script>
+</body>
+
+</html>
